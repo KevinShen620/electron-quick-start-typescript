@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, protocol, BrowserView, ipcMain, Event, dialog } from "electron";
 import * as path from "path";
 
 let mainWindow: Electron.BrowserWindow;
@@ -9,13 +9,17 @@ function createWindow() {
     height: 600,
     width: 800,
   });
-
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "../index.html"));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({
+    mode: 'bottom'
+  });
 
+  setTimeout(() => {
+    mainWindow.webContents.send('main-render', 'main-render');
+  }, 5 * 1000);
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
     // Dereference the window object, usually you would store windows
@@ -23,6 +27,7 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null;
   });
+
 }
 
 // This method will be called when Electron has finished
@@ -46,6 +51,16 @@ app.on("activate", () => {
     createWindow();
   }
 });
+
+ipcMain.on('render-main', (event: Event, arg: string) => {
+  console.log(arg);
+  dialog.showMessageBox(mainWindow, {
+    message: arg
+  });
+  let webContents = event.sender;
+  webContents.send('main-render', 'main-render');
+});
+
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.

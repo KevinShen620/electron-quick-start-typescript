@@ -6,11 +6,20 @@
         120
       ]
     },
+    "ordered-imports": false,
+    "prefer-const": false,
     "new-parens": true,
     "no-arg": true,
     "no-bitwise": true,
     "no-conditional-assignment": true,
-    "no-consecutive-blank-lines": false
+    "no-consecutive-blank-lines": false,
+    "no-console": false,
+    "indent": [
+      true,
+      "spaces",
+      2
+    ],
+    "quotemark": false,
   },
   "jsRules": {
     "max-line-length": {
