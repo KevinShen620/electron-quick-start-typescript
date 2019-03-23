@@ -1,8 +1,9 @@
-import { app, BrowserWindow, protocol, BrowserView, ipcMain, Event, dialog } from "electron";
+import { app, BrowserWindow, protocol, BrowserView, ipcMain, Event, dialog, Notification, Tray, Menu } from "electron";
 import * as path from "path";
+import { callbackify } from "util";
 
 let mainWindow: Electron.BrowserWindow;
-
+let tray: Tray = null;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -11,23 +12,28 @@ function createWindow() {
   });
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "../index.html"));
-
   // Open the DevTools.
   mainWindow.webContents.openDevTools({
     mode: 'bottom'
   });
 
-  setTimeout(() => {
-    mainWindow.webContents.send('main-render', 'main-render');
-  }, 5 * 1000);
   // Emitted when the window is closed.
-  mainWindow.on("closed", () => {
+  mainWindow.on("close", (e) => {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null;
+    mainWindow.hide();
+    e.preventDefault();
   });
-
+  // tray = new Tray("/Users/kevin/Desktop/表格.png");
+  // const contextMenu = Menu.buildFromTemplate([
+  //   { label: 'Item1', type: 'radio' },
+  //   { label: 'Item2', type: 'radio' },
+  //   { label: 'Item3', type: 'radio', checked: true },
+  //   { label: 'Item4', type: 'radio' }
+  // ])
+  // tray.setToolTip('This is my application.')
+  // tray.setContextMenu(contextMenu)
 }
 
 // This method will be called when Electron has finished
@@ -60,6 +66,7 @@ ipcMain.on('render-main', (event: Event, arg: string) => {
   let webContents = event.sender;
   webContents.send('main-render', 'main-render');
 });
+
 
 
 // In this file you can include the rest of your app"s specific main process
